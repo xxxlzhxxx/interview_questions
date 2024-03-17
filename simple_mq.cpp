@@ -6,6 +6,13 @@
 
 template<typename T>
 class SimpleMessageQueue {
+
+private:
+    std::queue<T> queue_;
+    std::mutex mutex_;
+    std::condition_variable condition_;
+
+
 public:
     // 向队列中添加消息
     void push(const T& message) {
@@ -23,12 +30,16 @@ public:
         queue_.pop();
         return message;
     }
-
-private:
-    std::queue<T> queue_;
-    std::mutex mutex_;
-    std::condition_variable condition_;
 };
+
+
+
+
+
+
+
+
+
 
 // 示例用法
 int main() {

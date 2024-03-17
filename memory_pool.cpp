@@ -3,6 +3,11 @@
 #include <cassert>
 
 class MemoryPool {
+
+    size_t blockSize;                         // 内存块大小
+    size_t blockCount;                        // 内存块数量
+    std::list<char*> freeBlocks;              // 空闲内存块列表
+
 public:
     MemoryPool(size_t blockSize, size_t blockCount) 
         : blockSize(blockSize), blockCount(blockCount) {
@@ -31,11 +36,6 @@ public:
         // 回收内存块
         freeBlocks.push_back(static_cast<char*>(block));
     }
-
-private:
-    size_t blockSize;                         // 内存块大小
-    size_t blockCount;                        // 内存块数量
-    std::list<char*> freeBlocks;              // 空闲内存块列表
 };
 
 int main() {
