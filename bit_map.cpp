@@ -3,11 +3,10 @@
 #include <stdexcept>
 
 class Bitmap {
-	
+
 private:
     std::vector<char> bits;
-
-
+    
 public:
     Bitmap(size_t size) : bits((size + 7) / 8, 0) {}
 
@@ -32,6 +31,12 @@ public:
         return (bits[pos / 8] & (1 << (pos % 8))) != 0;
     }
 };
+
+
+
+
+
+
 
 int main() {
     Bitmap bitmap(32);
