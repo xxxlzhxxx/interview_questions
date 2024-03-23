@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <vector>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ void test_reference_counting_in_function_r(shared_ptr<int>& ptr){
 	cout << "ptr1: reference counting: " << ptr.use_count() << endl;
 }
 
+vector <int> v;
 
 int main(){
 	auto shared_p1 = make_shared<int>(10);
