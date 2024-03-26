@@ -55,7 +55,6 @@ void use_malloc(){
 void  use_calloc(){
     int* array = (int*)calloc(10, sizeof(int));
     free(array);
-
 }
 
 

@@ -6,6 +6,15 @@ class SharedPtr {
 private:
     T* ptr;
     std::atomic<int>* count;
+    // 释放资源
+    void release() {
+        if (count && --(*count) == 0) {
+            delete ptr;
+            delete count;
+            ptr = nullptr;
+            count = nullptr;
+        }
+    }
 
 public:
     // 构造函数
@@ -70,16 +79,7 @@ public:
         return count ? *count : 0;
     }
 
-private:
-    // 释放资源
-    void release() {
-        if (count && --(*count) == 0) {
-            delete ptr;
-            delete count;
-            ptr = nullptr;
-            count = nullptr;
-        }
-    }
+
 };
 
 int main() {

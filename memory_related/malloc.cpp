@@ -28,9 +28,6 @@ int main() {
     // 释放内存
     free(arr);
 
-
-
-
     int rows = 3;
     int cols = 4;
     int **matrix;

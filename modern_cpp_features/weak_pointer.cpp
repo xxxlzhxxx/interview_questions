@@ -31,8 +31,6 @@ int main(){
 	auto a = make_shared<A>();
 	auto b = make_shared<B>();
 
-
-
 	a->ptr = b;
 	b->ptr = a;
 

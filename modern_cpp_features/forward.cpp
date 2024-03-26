@@ -32,11 +32,6 @@ T&& myForward(typename std::remove_reference<T>::type& arg) {
 
 
 
-
-
-
-
-
 int main(){
 
 	int i = 1;
