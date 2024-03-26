@@ -25,6 +25,13 @@ public:
         data = new T[capacity];
     }
 
+    MyVector(size_t count, const T& value) : capacity(count), size(count) {
+        data = new T[capacity];
+        for (size_t i = 0; i < size; ++i) {
+            data[i] = value;
+        }
+    }
+
     ~MyVector() {
         delete[] data;
     }
@@ -39,7 +46,6 @@ public:
     }
 
 
-
 	// 模板参数包
     template <typename... Args>
     void emplace_back(Args&&... args) {     //函数参数包
@@ -48,8 +54,6 @@ public:
         }
         new(&data[size++]) T(std::forward<Args>(args)...);
     }
-
-
 
 
     T& operator[](size_t index) {
@@ -92,6 +96,8 @@ public:
 };
 
 int main() {
+    MyVector<int> v1(2, 3);
+
     MyVector<std::pair<int, std::string>> vec;
     vec.emplace_back(1, "one");
     vec.emplace_back(2, "two");

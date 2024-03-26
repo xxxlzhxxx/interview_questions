@@ -2,71 +2,80 @@
 #include <list>
 #include <vector>
 
-class HashTable {
+class MyUnorderedMap {
 public:
-    HashTable(int size) : table(size) {}
+    MyUnorderedMap() : buckets_(initial_buckets_size), size_(0) {}
 
-    // 插入键值对
     void insert(int key, int value) {
-        int index = hashFunction(key);
-        auto& list = table[index];
-        for (auto& pair : list) {
+        size_t index = hash(key) % buckets_.size();
+        for (auto& pair : buckets_[index]) {
             if (pair.first == key) {
                 pair.second = value;
                 return;
             }
         }
-        list.emplace_back(key, value);
+        buckets_[index].emplace_back(key, value);
+        ++size_;
+        if (buckets_[index].size() > max_chain_length) {
+            rehash();
+        }
     }
 
-    // 查找键对应的值
-    bool find(int key, int& value) {
-        int index = hashFunction(key);
-        auto& list = table[index];
-        for (auto& pair : list) {
+    int get(int key) {
+        size_t index = hash(key) % buckets_.size();
+        for (auto& pair : buckets_[index]) {
             if (pair.first == key) {
-                value = pair.second;
-                return true;
+                return pair.second;
             }
         }
-        return false;
+        return -1; // Key not found
     }
 
-    // 删除键值对
-    bool remove(int key) {
-        int index = hashFunction(key);
-        auto& list = table[index];
-        for (auto it = list.begin(); it != list.end(); ++it) {
+    void remove(int key) {
+        size_t index = hash(key) % buckets_.size();
+        auto& chain = buckets_[index];
+        for (auto it = chain.begin(); it != chain.end(); ++it) {
             if (it->first == key) {
-                list.erase(it);
-                return true;
+                chain.erase(it);
+                --size_;
+                return;
             }
         }
-        return false;
     }
 
+private:
+    std::vector<std::list<std::pair<int, int>>> buckets_;
+    size_t size_;
+    static const size_t initial_buckets_size = 4;
+    static const size_t max_chain_length = 4;
 
+    size_t hash(int key) {
+        return std::hash<int>{}(key);
+    }
+
+    void rehash() {
+        std::vector<std::list<std::pair<int, int>>> new_buckets(buckets_.size() * 2);
+        for (auto& chain : buckets_) {
+            for (auto& pair : chain) {
+                size_t index = hash(pair.first) % new_buckets.size();
+                new_buckets[index].emplace_back(pair);
+            }
+        }
+        buckets_ = std::move(new_buckets);
+    }
 };
 
-
-
-
-
-
-
-
 int main() {
-    HashTable ht(10);
+    MyUnorderedMap map;
+    map.insert(1, 100);
+    map.insert(2, 200);
+    map.insert(3, 300);
+    map.insert(4, 400);
+    map.insert(5, 500); // This should trigger a rehash
 
-    // 插入键值对
-    ht.insert(1, 10);
-    ht.insert(2, 20);
-    ht.insert(11, 110);
+    std::cout << "Value for key 3: " << map.get(3) << std::endl;
+    map.remove(3);
+    std::cout << "Value for key 3 after removal: " << map.get(3) << std::endl;
 
-    // 查找键对应的值
-    int value;
-    if (ht.find(2, value)) {
-        std::cout << "Value for key 2 is " << value << std::endl;
-    }
     return 0;
 }
