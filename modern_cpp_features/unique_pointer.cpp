@@ -7,7 +7,11 @@ private:
 
 public:
     // 构造函数, explict关键字：显示构造函数，不能隐式转换
-    explicit UniquePtr(T* p = nullptr) : ptr(p) {}
+    // noexcept告诉编译器函数不会发生异常，有利于编译器做优化
+    explicit UniquePtr(T* p = nullptr) noexcept: ptr(std::move(p)) {}
+
+    // 默认构造, constexpr说明产生constexpr对象, 所有成员都是编译期可求值
+    constexpr UniquePtr() noexcept: ptr(nullptr){}
 
     // 析构函数
     ~UniquePtr() {
@@ -17,6 +21,7 @@ public:
     // 移动构造函数
     UniquePtr(UniquePtr&& other) noexcept : ptr(other.ptr) {
         other.ptr = nullptr;
+        // other.swap(*this); // 此函数也可以这么写
     }
 
     // 移动赋值运算符
@@ -26,6 +31,7 @@ public:
             ptr = other.ptr;
             other.ptr = nullptr;
         }
+        // other.swap(*this); // 上方if也可以用此行代替
         return *this;
     }
 
@@ -56,10 +62,21 @@ public:
         return temp;
     }
 
-    // 重置指针
+    // 重置指针, 删除老的, 指向新的
     void reset(T* p = nullptr) {
         delete ptr;
-        ptr = p;
+        ptr = nullptr;
+        std::swap(ptr, p);
+    }
+
+    // 交换资源
+    void swap(UniquePtr& other) {
+        std::swap(ptr, other.ptr);
+    }
+
+    // 重载bool运算符
+    explicit operator bool() const noexcept {
+        return ptr;
     }
 };
 
