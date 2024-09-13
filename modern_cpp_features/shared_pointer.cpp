@@ -18,7 +18,9 @@ private:
 
 public:
     // 构造函数
-    explicit SharedPtr(T* p = nullptr) : ptr(p), count(new std::atomic<int>(1)) {}
+    explicit SharedPtr(T* p = nullptr) : ptr(p){
+        count = p ? new std::atomic<int>(1) : new std::atomic<int>(0);
+    }
 
     // 拷贝构造函数
     SharedPtr(const SharedPtr& other) : ptr(other.ptr), count(other.count) {
@@ -76,7 +78,12 @@ public:
 
     // 获取引用计数
     int use_count() const {
-        return count ? *count : 0;
+        return count ? count->load() : 0;
+    }
+
+    // 重载bool运算符
+    operator bool() const {
+        return ptr;
     }
 
 
